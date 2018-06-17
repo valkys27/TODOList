@@ -8,19 +8,24 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 @ComponentScan("com.edu.unicorn.todolist")
 public class WebConfig extends WebMvcConfigurationSupport {
 
+    private static final String PREFIX = "/WEB-INF/";
+    private static final String SUFFIX = ".html";
+    private static final String RESOURCE_HANDLER = "/resources/**";
+    private static final String RESOURCE_LOCATIONS = "/resources/";
+
     @Bean
     public InternalResourceViewResolver internalResourceViewResolver() {
         InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-        resolver.setPrefix("/WEB-INF/");
-        resolver.setSuffix(".html");
+        resolver.setPrefix(PREFIX);
+        resolver.setSuffix(SUFFIX);
         return resolver;
     }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry
-                .addResourceHandler("/resources/**")
-                .addResourceLocations("/resources/");
+                .addResourceHandler(RESOURCE_HANDLER)
+                .addResourceLocations(RESOURCE_LOCATIONS);
     }
 
     @Override

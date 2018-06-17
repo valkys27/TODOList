@@ -4,9 +4,11 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 
 public class MvcWebAppInit extends AbstractAnnotationConfigDispatcherServletInitializer {
 
+    private static final String SERVLET_MAPPINGS = "/";
+
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class[] { PersistenceUnitConfig.class };
+        return new Class[] { PersistenceUnitConfig.class, PropertiesConfig.class };
     }
 
     @Override
@@ -16,7 +18,7 @@ public class MvcWebAppInit extends AbstractAnnotationConfigDispatcherServletInit
 
     @Override
     protected String[] getServletMappings() {
-        return new String[] { "/" };
+        return new String[] { SERVLET_MAPPINGS };
     }
 
 }

@@ -3,10 +3,11 @@ package com.edu.unicorn.todolist.app.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.HibernateExceptionTranslator;
 import org.springframework.orm.jpa.*;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.orm.jpa.vendor.*;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -16,8 +17,17 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-@PropertySource(value = {"classpath:jdbc.properties"})
+@EnableJpaRepositories("com.edu.unicorn.todolist.data.repository")
 public class PersistenceUnitConfig {
+
+    private static final String DRIVER_CLASS_NAME = "jdbc.driver_class_name";
+    private static final String URL = "jdbc.url";
+    private static final String USER = "jdbc.user";
+    private static final String PASSWORD = "jdbc.password";
+    private static final String HIBERNATE_DIALECT = "hibernate.dialect";
+    private static final String HIBERNATE_HBM2DDL_AUTO = "hibernate.hbm2ddl.auto";
+    private static final String HIBERNATE_SHOW_SQL = "hibernate.show_sql";
+    private static final String PACKAGES_TO_SCAN = "com.edu.unicorn.todolist.data.entity";
 
     private final Environment environment;
 
@@ -29,38 +39,32 @@ public class PersistenceUnitConfig {
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        dataSource.setUrl(environment.getRequiredProperty("jdbc.url"));
-        dataSource.setUsername(environment.getRequiredProperty("jdbc.user"));
-        dataSource.setPassword(environment.getRequiredProperty("jdbc.password"));
+        dataSource.setDriverClassName(environment.getRequiredProperty(DRIVER_CLASS_NAME));
+        dataSource.setUrl(environment.getRequiredProperty(URL));
+        dataSource.setUsername(environment.getRequiredProperty(USER));
+        dataSource.setPassword(environment.getRequiredProperty(PASSWORD));
         return dataSource;
     }
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-        LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
-        factoryBean.setJpaVendorAdapter(jpaVendorAdapter());
-        factoryBean.setPackagesToScan("com.edu.unicorn.todolist.data.entity");
-        factoryBean.setDataSource(dataSource());
-        factoryBean.setJpaProperties(jpaProperties());
-        return factoryBean;
+    public Properties jpaProperties() {
+        Properties properties = new Properties();
+        properties.put(HIBERNATE_DIALECT, environment.getRequiredProperty(HIBERNATE_DIALECT));
+        properties.put(HIBERNATE_HBM2DDL_AUTO, environment.getRequiredProperty(HIBERNATE_HBM2DDL_AUTO));
+        properties.put(HIBERNATE_SHOW_SQL, environment.getRequiredProperty(HIBERNATE_SHOW_SQL));
+        return properties;
     }
 
     @Bean
-    public JpaVendorAdapter jpaVendorAdapter() {
-        HibernateJpaVendorAdapter hibernateJpaVendorAdapter = new HibernateJpaVendorAdapter();
-        hibernateJpaVendorAdapter.setGenerateDdl(true);
-        hibernateJpaVendorAdapter.setShowSql(true);
-        return hibernateJpaVendorAdapter;
-    }
-
-    private Properties jpaProperties() {
-        Properties properties = new Properties();
-        properties.put("hibernate.dialect", environment.getRequiredProperty("hibernate.dialect"));
-        properties.put("hibernate.hbm2ddl.auto", environment.getRequiredProperty("hibernate.hbm2ddl.auto"));
-        properties.put("hibernate.show_sql", environment.getRequiredProperty("hibernate.show_sql"));
-        properties.put("hibernate.format_sql", environment.getRequiredProperty("hibernate.format_sql"));
-        return properties;
+    @Autowired
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource, Properties jpaProperties) {
+        LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
+        factoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+        factoryBean.setPackagesToScan(PACKAGES_TO_SCAN);
+        factoryBean.setDataSource(dataSource);
+        factoryBean.setJpaProperties(jpaProperties);
+        factoryBean.setJpaDialect(new HibernateJpaDialect());
+        return factoryBean;
     }
 
     @Bean

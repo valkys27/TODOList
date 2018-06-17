@@ -3,13 +3,11 @@ package com.edu.unicorn.todolist.service;
 import com.edu.unicorn.todolist.data.entity.Todo;
 import com.edu.unicorn.todolist.data.repository.TodoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service("todoService")
-@EnableJpaRepositories("com.edu.unicorn.todolist.data.repository")
 public class TodoServiceImpl implements TodoService {
 
     private final TodoRepository todoRepository;

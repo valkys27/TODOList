@@ -10,7 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/todo", headers = "Accept=application/json")
+@RequestMapping(value = TodoMappings.CONTROLLER, headers = "Accept=application/json")
 public class TodoController {
 
     private final TodoService todoService;
@@ -20,27 +20,27 @@ public class TodoController {
         this.todoService = todoService;
     }
 
-    @GetMapping("/list")
+    @GetMapping(TodoMappings.LIST)
     public ModelAndView list() {
         return new ModelAndView("index");
     }
 
-    @GetMapping(value = "/getAll", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = TodoMappings.GET_ALL, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Todo> getAll() {
         return todoService.getAll(ListType.ALL);
     }
 
-    @PostMapping(value = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = TodoMappings.SAVE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Todo save(@RequestBody Todo todo) {
         return todoService.save(todo);
     }
 
-    @PostMapping(value = "/delete")
+    @PostMapping(value = TodoMappings.DELETE)
     public void delete(@RequestBody Todo todo) {
         todoService.delete(todo);
     }
 
-    @GetMapping(value = "/clearCompleted")
+    @GetMapping(value = TodoMappings.CLEAR_COMPLETED)
     public void clearCompleted() {
         todoService.clearCompleted();
     }

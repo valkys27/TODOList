@@ -3,6 +3,7 @@ package com.edu.unicorn.todolist.data.entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
 public class Todo implements Serializable {
@@ -16,6 +17,15 @@ public class Todo implements Serializable {
 
     @NotNull
     private boolean completed;
+
+    public Todo(Long id, @NotNull String title, @NotNull boolean completed) {
+        this.id = id;
+        this.title = title;
+        this.completed = completed;
+    }
+
+    public Todo() {
+    }
 
     public Long getId() {
         return id;
@@ -39,5 +49,20 @@ public class Todo implements Serializable {
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Todo todo = (Todo) o;
+        return completed == todo.completed &&
+                Objects.equals(id, todo.id) &&
+                Objects.equals(title, todo.title);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, completed);
     }
 }

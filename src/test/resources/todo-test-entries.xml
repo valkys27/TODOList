@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <Todo
+            id="1"
+            title="completed"
+            completed="true"/>
+    <Todo
+            id="2"
+            title="no completed"
+            completed="false"/>
+</dataset>
